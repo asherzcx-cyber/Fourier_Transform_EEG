@@ -17,7 +17,7 @@
     h1 { max-width:800px; font-size:clamp(2.5rem,6vw,5.2rem); margin:0 0 18px; }
     h2 { font-size:2rem; margin-top:0; }
     main { max-width:1080px; margin:auto; padding:42px 24px 90px; }
-    section { margin:0 0 34px; padding:34px; background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 3px 14px #1322380d; }
+    section { margin:0 0 34px; padding:34px; scroll-margin-top:52px; background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 3px 14px #1322380d; }
     .tag { display:inline-block; border:1px solid #8cc8c2; color:#075d57; background:#e7f7f4; border-radius:999px; padding:4px 10px; font:700 12px system-ui,sans-serif; letter-spacing:.04em; text-transform:uppercase; }
     .timeline { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:22px; }
     .time { border-left:4px solid var(--teal); background:#effaf8; padding:12px; font-family:system-ui,sans-serif; }
@@ -37,6 +37,8 @@
     output { float:right; color:#73e2d8; }
     canvas { width:100%; display:block; margin-top:22px; background:#fff; border-radius:10px; }
     .note { padding:14px 16px; border-left:4px solid var(--teal); background:#effaf8; }
+    button { margin-top:14px; border:0; border-radius:8px; padding:11px 16px; background:var(--blue); color:#fff; cursor:pointer; font:700 15px system-ui,sans-serif; }
+    button:hover { background:#0f3d6a; }
     code { font:14px ui-monospace,SFMono-Regular,Menlo,monospace; }
     footer { text-align:center; color:#536273; font:14px system-ui,sans-serif; padding:24px; }
     @media (max-width:700px) { .timeline,.grid,.controls { grid-template-columns:1fr; } section { padding:23px; } nav { overflow:auto; white-space:nowrap; } }
@@ -44,7 +46,7 @@
 </head>
 <body>
   <nav>
-    <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#source">Signal source</a><a href="#math">Math</a><a href="#fft">DFT + FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
+    <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#neuron">Neuron demo</a><a href="#source">Signal source</a><a href="#math">Math</a><a href="#fft">DFT + FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
   </nav>
   <header>
     <span class="tag">Math presentation</span>
@@ -68,6 +70,20 @@
       </div>
       <p class="note">Why Fourier analysis is appropriate: a short EEG segment can be modeled as a mixture of oscillations at different frequencies, plus noise and artifacts.</p>
       <div class="formula">EEG(t) ≈ Σ A<sub>j</sub> cos(2πf<sub>j</sub>t + φ<sub>j</sub>) + noise</div>
+    </section>
+
+    <section id="neuron">
+      <span class="tag">Interactive neuroscience demo</span>
+      <h2>Click a pyramidal neuron to fire it</h2>
+      <p>Click the large cell body on the left. The animation is a simplified model of an action potential: sodium ions enter the cell, the membrane depolarizes, and a wave of current travels down the axon.</p>
+      <canvas id="neuronCanvas" width="950" height="380" aria-label="Click the pyramidal neuron on the left to animate an action potential"></canvas>
+      <p id="neuronStatus" class="note" aria-live="polite"><strong>Ready:</strong> Click the circular cell body on the left to start the action potential.</p>
+      <button id="fireNeuron" type="button">Fire action potential</button>
+      <div class="grid" style="margin-top:22px">
+        <div class="card"><h3>Electric field</h3><p>Ion flow and changing membrane voltage produce an electric potential in nearby tissue. The blue curves in the animation are a visual metaphor for this field spreading through conductive tissue.</p></div>
+        <div class="card"><h3>Magnetic field</h3><p>Moving electrical current also produces a magnetic field that curls around the current direction. The amber loops show this idea. Outside the head, these tiny magnetic fields are measured by MEG, not ordinary EEG electrodes.</p></div>
+      </div>
+      <p class="note">Important scale note: one neuron’s action potential is far too small to make a scalp EEG trace. Scalp EEG mainly reflects summed, synchronized <em>postsynaptic currents</em> in many aligned pyramidal neurons. This demo shows the physical building blocks.</p>
     </section>
 
     <section id="source">
@@ -135,6 +151,45 @@
     function drawAxes(c,title,xlabel,ylabel){const q=c.getContext('2d'),w=c.width,h=c.height;q.clearRect(0,0,w,h);q.fillStyle='#fff';q.fillRect(0,0,w,h);q.strokeStyle='#d8e1ea';q.lineWidth=1;for(let i=1;i<5;i++){q.beginPath();q.moveTo(45,i*h/5);q.lineTo(w-15,i*h/5);q.stroke()}q.strokeStyle='#718096';q.beginPath();q.moveTo(45,15);q.lineTo(45,h-32);q.lineTo(w-15,h-32);q.stroke();q.fillStyle='#132238';q.font='bold 15px system-ui';q.fillText(title,52,23);q.font='12px system-ui';q.fillText(xlabel,w-130,h-9);q.save();q.translate(14,h/2);q.rotate(-Math.PI/2);q.fillText(ylabel,0,0);q.restore();return q}
     function line(q,vals,color,max){const w=q.canvas.width,h=q.canvas.height; q.strokeStyle=color;q.lineWidth=2;q.beginPath();vals.forEach((v,i)=>{const x=45+i*(w-60)/(vals.length-1),y=h-32-(v/max)*(h-50);i?q.lineTo(x,y):q.moveTo(x,y)});q.stroke()}
     function update(){const f1=+$('f1').value,a1=+$('a1').value/10,f2=+$('f2').value,a2=+$('a2').value/10;$('f1out').textContent=f1+' Hz';$('a1out').textContent=a1.toFixed(1);$('f2out').textContent=f2+' Hz';$('a2out').textContent=a2.toFixed(1);const fs=128,N=256,signal=[];for(let n=0;n<N;n++){let t=n/fs;signal.push(a1*Math.sin(2*Math.PI*f1*t)+a2*Math.sin(2*Math.PI*f2*t))}const tq=drawAxes($('timeCanvas'),'Combined signal in time','time (2 s)','amplitude');const scaled=signal.map(v=>v+2.2);line(tq,scaled,'#164e88',4.4);const mags=[];for(let k=0;k<=40;k++){let re=0,im=0;for(let n=0;n<N;n++){let ang=-2*Math.PI*k*n/N;re+=signal[n]*Math.cos(ang);im+=signal[n]*Math.sin(ang)}mags.push(Math.sqrt(re*re+im*im)/N)}const fq=drawAxes($('freqCanvas'),'DFT magnitude: peaks reveal the ingredients','frequency (Hz)','magnitude');line(fq,mags,'#f97316',Math.max(...mags)*1.12);const q=fq; q.fillStyle='#475569';q.font='12px system-ui';for(let k=0;k<=40;k+=5)q.fillText(k,42+k*(fq.canvas.width-60)/40,fq.canvas.height-17)} ids.forEach(id=>$(id).addEventListener('input',update));update();
+
+    const neuronCanvas=$('neuronCanvas'), neuron=neuronCanvas.getContext('2d'), neuronStatus=$('neuronStatus');
+    let fireStart=null;
+    function neuronText(message){neuronStatus.innerHTML=message;}
+    function branch(x1,y1,x2,y2){neuron.beginPath();neuron.moveTo(x1,y1);neuron.lineTo(x2,y2);neuron.stroke();}
+    function drawNeuron(progress=-1){
+      const w=neuronCanvas.width,h=neuronCanvas.height,active=progress>=0&&progress<=1;
+      neuron.clearRect(0,0,w,h);neuron.fillStyle='#10243b';neuron.fillRect(0,0,w,h);
+      neuron.fillStyle='#eaf4ff';neuron.font='bold 18px system-ui';neuron.fillText('Pyramidal neuron: click the cell body to fire',28,32);
+      const sx=170,sy=205,axonStart=220,axonEnd=855;
+      neuron.strokeStyle='#8fb3d9';neuron.lineWidth=4;neuron.lineCap='round';
+      [[110,92],[76,145],[80,250],[120,314],[170,72],[218,88],[228,134],[231,278],[205,326]].forEach(([x,y])=>branch(sx,sy,x,y));
+      neuron.beginPath();neuron.moveTo(axonStart,sy);neuron.lineTo(axonEnd,sy);neuron.stroke();
+      neuron.strokeStyle='#507ba4';neuron.lineWidth=12;for(let x=270;x<840;x+=74){neuron.beginPath();neuron.moveTo(x,sy);neuron.lineTo(x+43,sy);neuron.stroke();}
+      neuron.fillStyle=active&&progress<.24?'#fb923c':'#59b7ae';neuron.beginPath();neuron.arc(sx,sy,45,0,Math.PI*2);neuron.fill();
+      neuron.strokeStyle='#d5f3ef';neuron.lineWidth=3;neuron.stroke();
+      neuron.fillStyle='#10243b';neuron.font='bold 14px system-ui';neuron.fillText('cell body',133,210);
+      neuron.fillStyle='#c9e4ff';neuron.font='13px system-ui';neuron.fillText('dendrites',44,63);neuron.fillText('axon',520,186);
+      neuron.setLineDash([7,7]);neuron.strokeStyle='rgba(72,198,186,.55)';neuron.lineWidth=2;
+      for(let r=74;r<175;r+=32){neuron.beginPath();neuron.ellipse(sx,sy,r,r*.57,0,0,Math.PI*2);neuron.stroke();}
+      neuron.setLineDash([]);neuron.fillStyle='#78d9d1';neuron.font='12px system-ui';neuron.fillText('electric potential spreading through tissue',270,334);
+      neuron.fillStyle='#d5f3ef';neuron.font='13px system-ui';neuron.fillText('Membrane voltage',700,68);neuron.strokeStyle='#7197bd';neuron.lineWidth=1;neuron.strokeRect(690,80,220,94);
+      neuron.strokeStyle='#a8d9ff';neuron.beginPath();for(let i=0;i<180;i++){const x=708+i,y=150-(i<58?0:i<74?(i-58)*2.35:i<108?38-(i-74)*1.15:0);i?neuron.lineTo(x,y):neuron.moveTo(x,y)}neuron.stroke();
+      neuron.fillStyle='#b7cbe0';neuron.font='11px system-ui';neuron.fillText('rest',695,164);neuron.fillText('action potential',770,164);
+      if(active){
+        const px=axonStart+(axonEnd-axonStart)*progress;
+        neuron.shadowColor='#fbbf24';neuron.shadowBlur=22;neuron.fillStyle='#fde68a';neuron.beginPath();neuron.arc(px,sy,15,0,Math.PI*2);neuron.fill();neuron.shadowBlur=0;
+        neuron.strokeStyle='#fbbf24';neuron.lineWidth=3;for(let r=26;r<72;r+=19){neuron.beginPath();neuron.ellipse(px,sy,r,r*.45,0,0,Math.PI*2);neuron.stroke();}
+        neuron.fillStyle='#fde68a';neuron.font='12px system-ui';neuron.fillText('magnetic field around current',Math.min(px+25,720),sy-54);
+        if(progress<.28){for(let i=0;i<8;i++){const a=i*Math.PI/4+progress*8,x=sx+74*Math.cos(a),y=sy+74*Math.sin(a);const endX=sx+43*Math.cos(a),endY=sy+43*Math.sin(a);neuron.strokeStyle='#fb923c';neuron.lineWidth=3;branch(x,y,endX,endY);neuron.fillStyle='#fed7aa';neuron.beginPath();neuron.arc(x,y,7,0,Math.PI*2);neuron.fill();}neuron.fillStyle='#fed7aa';neuron.font='bold 14px system-ui';neuron.fillText('Na⁺ influx',110,365);}
+      }
+    }
+    function fireNeuron(){
+      fireStart=performance.now();
+      function frame(now){const p=Math.min((now-fireStart)/3200,1);drawNeuron(p);if(p<.24)neuronText('<strong>Step 1 — Depolarization:</strong> sodium ions (Na⁺) flow inward, making the inside of the membrane less negative.');else if(p<.9)neuronText('<strong>Step 2 — Propagation:</strong> the action potential moves down the axon as a wave of membrane current.');else neuronText('<strong>Step 3 — Field:</strong> moving current produces an electric potential and a tiny surrounding magnetic field. Click the cell body to fire again.');if(p<1)requestAnimationFrame(frame);}
+      requestAnimationFrame(frame);
+    }
+    neuronCanvas.addEventListener('click',event=>{const box=neuronCanvas.getBoundingClientRect(),x=(event.clientX-box.left)*neuronCanvas.width/box.width,y=(event.clientY-box.top)*neuronCanvas.height/box.height;if((x-170)**2+(y-205)**2<70**2)fireNeuron();else neuronText('<strong>Tip:</strong> Click the large circular cell body on the left, or use the “Fire action potential” button.');});
+    $('fireNeuron').addEventListener('click',fireNeuron);drawNeuron();
   </script>
 </body>
 </html>

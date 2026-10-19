@@ -14,8 +14,10 @@ actually computes a discrete Fourier transform (DFT) using an FFT algorithm.
 The repository also includes a browser-based interactive presentation in
 [`docs/index.html`](docs/index.html). It has the real EEG result plus a live
 two-wave mixer: changing the waves immediately changes the displayed DFT
-spectrum. Follow [the short GitHub Pages instructions](docs/README.md) to put
-it online.
+spectrum. It also includes a click-to-fire pyramidal-neuron animation showing
+sodium-ion influx, action-potential propagation, and the associated electric
+and magnetic fields. Follow [the short GitHub Pages instructions](docs/README.md)
+to put it online.
 
 ![Eight seconds of the Oz EEG signal and its FFT power spectrum](figures/eeg_fft_demo.png)
 

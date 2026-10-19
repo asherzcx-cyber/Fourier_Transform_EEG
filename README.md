@@ -14,10 +14,8 @@ actually computes a discrete Fourier transform (DFT) using an FFT algorithm.
 The repository also includes a browser-based interactive presentation in
 [`docs/index.html`](docs/index.html). It has the real EEG result plus a live
 two-wave mixer: changing the waves immediately changes the displayed DFT
-spectrum. It also includes a click-to-fire pyramidal-neuron animation showing
-sodium-ion influx, action-potential propagation, and the associated electric
-and magnetic fields. Follow [the short GitHub Pages instructions](docs/README.md)
-to put it online.
+spectrum. Follow [the short GitHub Pages instructions](docs/README.md) to put
+it online.
 
 ![Eight seconds of the Oz EEG signal and its FFT power spectrum](figures/eeg_fft_demo.png)
 
@@ -77,6 +75,34 @@ Synchrony matters: randomly oriented or uncoordinated neuronal currents tend
 to cancel at the scalp, while many similarly oriented neurons changing together
 can produce a detectable rhythm. Fourier analysis decomposes that measured
 voltage rhythm into frequency components; it does not create the rhythms.
+
+In the quasi-static approximation, the physical relationship can be summarized
+with current density \(J\), conductivity \(\sigma\), electric field \(E\),
+electric potential \(V\), and biological source current \(J_p\):
+
+$$
+J=\sigma E+J_p, \qquad E=-\nabla V.
+$$
+
+Conservation of charge, \(\nabla\cdot J=0\), then gives
+
+$$
+\nabla\cdot(\sigma\nabla V)=\nabla\cdot J_p.
+$$
+
+This says that biological current sources create a voltage field that spreads
+through conductive tissue. EEG does not measure an absolute voltage: one
+channel records a difference,
+
+$$
+V_{\text{channel}}(t)=V_{\text{electrode}}(t)-V_{\text{reference}}(t).
+$$
+
+Conductive gel and electrodes couple the scalp voltage to a high-input-
+impedance differential amplifier. Before digitization, an anti-alias low-pass
+filter limits high-frequency content; the amplifier output is then sampled at
+\(F_s=160\text{ Hz}\). Those sampled values—not the continuous physical
+voltage—are what the DFT uses.
 
 ---
 
@@ -228,6 +254,38 @@ $$
 x[0],x[1],\ldots,x[N-1].
 $$
 
+Let \(T_s=1/F_s\) be the sampling interval. For this recording,
+
+$$
+T_s=\frac{1}{160}\text{ s}, \qquad x[n]=x(nT_s).
+$$
+
+Using frequency \(f\) in hertz, the continuous Fourier transform is
+
+$$
+X_c(f)=\int x(t)e^{-i2\pi ft}\,dt.
+$$
+
+Replacing the integral with a Riemann sum over the observed samples gives
+
+$$
+X_c(f)\approx T_s\sum_{n=0}^{N-1}x[n]e^{-i2\pi fnT_s}.
+$$
+
+The DFT evaluates this approximation at the special frequencies
+
+$$
+f_k=\frac{kF_s}{N}.
+$$
+
+Substituting \(f_k\) and \(T_s=1/F_s\) gives
+
+$$
+e^{-i2\pi f_knT_s}=e^{-i2\pi kn/N}.
+$$
+
+After omitting the constant scale \(T_s\), we obtain the DFT:
+
 The **discrete Fourier transform (DFT)** is
 
 $$
@@ -257,6 +315,25 @@ The meaningful frequency resolution is
 $$
 \boxed{\Delta f=\frac{F_s}{N}=\frac{160}{1280}=0.125\text{ Hz}.}
 $$
+
+For a real-valued EEG, the negative-frequency half of the DFT is the mirror of
+the positive-frequency half, so the analysis plots bins from 0 Hz to the
+Nyquist frequency only. Before calculating the DFT, the code uses
+
+$$
+x_w[n]=(x[n]-\bar{x})w[n]
+$$
+
+with the Hann window
+
+$$
+w[n]=\frac12\left(1-\cos\left(\frac{2\pi n}{N-1}\right)\right).
+$$
+
+Subtracting \(\bar{x}\) reduces the 0-Hz offset. The Hann window softens the
+two edges of the finite segment and reduces spectral leakage. The program then
+forms a one-sided power estimate from \(\lvert X[k]\rvert^2\), normalized by
+the sample rate and the window energy.
 
 The highest representable frequency is the **Nyquist frequency**:
 

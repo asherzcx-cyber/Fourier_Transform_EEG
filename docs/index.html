@@ -37,8 +37,6 @@
     output { float:right; color:#73e2d8; }
     canvas { width:100%; display:block; margin-top:22px; background:#fff; border-radius:10px; }
     .note { padding:14px 16px; border-left:4px solid var(--teal); background:#effaf8; }
-    button { margin-top:14px; border:0; border-radius:8px; padding:11px 16px; background:var(--blue); color:#fff; cursor:pointer; font:700 15px system-ui,sans-serif; }
-    button:hover { background:#0f3d6a; }
     code { font:14px ui-monospace,SFMono-Regular,Menlo,monospace; }
     footer { text-align:center; color:#536273; font:14px system-ui,sans-serif; padding:24px; }
     @media (max-width:700px) { .timeline,.grid,.controls { grid-template-columns:1fr; } section { padding:23px; } nav { overflow:auto; white-space:nowrap; } }
@@ -46,7 +44,7 @@
 </head>
 <body>
   <nav>
-    <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#neuron">Neuron demo</a><a href="#source">Signal source</a><a href="#math">Math</a><a href="#fft">DFT + FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
+    <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#source">Signal source</a><a href="#math">Math</a><a href="#fft">DFT + FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
   </nav>
   <header>
     <span class="tag">Math presentation</span>
@@ -72,24 +70,14 @@
       <div class="formula">EEG(t) ≈ Σ A<sub>j</sub> cos(2πf<sub>j</sub>t + φ<sub>j</sub>) + noise</div>
     </section>
 
-    <section id="neuron">
-      <span class="tag">Interactive neuroscience demo</span>
-      <h2>Click a pyramidal neuron to fire it</h2>
-      <p>Click the large cell body on the left. The animation is a simplified model of an action potential: sodium ions enter the cell, the membrane depolarizes, and a wave of current travels down the axon.</p>
-      <canvas id="neuronCanvas" width="950" height="380" aria-label="Click the pyramidal neuron on the left to animate an action potential"></canvas>
-      <p id="neuronStatus" class="note" aria-live="polite"><strong>Ready:</strong> Click the circular cell body on the left to start the action potential.</p>
-      <button id="fireNeuron" type="button">Fire action potential</button>
-      <div class="grid" style="margin-top:22px">
-        <div class="card"><h3>Electric field</h3><p>Ion flow and changing membrane voltage produce an electric potential in nearby tissue. The blue curves in the animation are a visual metaphor for this field spreading through conductive tissue.</p></div>
-        <div class="card"><h3>Magnetic field</h3><p>Moving electrical current also produces a magnetic field that curls around the current direction. The amber loops show this idea. Outside the head, these tiny magnetic fields are measured by MEG, not ordinary EEG electrodes.</p></div>
-      </div>
-      <p class="note">Important scale note: one neuron’s action potential is far too small to make a scalp EEG trace. Scalp EEG mainly reflects summed, synchronized <em>postsynaptic currents</em> in many aligned pyramidal neurons. This demo shows the physical building blocks.</p>
-    </section>
-
     <section id="source">
       <span class="tag">Neuroscience + physics</span>
       <h2>Where does an EEG signal come from?</h2>
       <p>EEG is not a recording of individual action potentials. At the scalp, it mainly reflects the summed, synchronized electrical activity of large populations of cortical neurons—especially the long, similarly oriented <strong>pyramidal neurons</strong> in the cerebral cortex.</p>
+      <div class="grid">
+        <div class="card"><h3>Electrochemical origin</h3><p>Each neuron maintains a membrane voltage, defined as V<sub>m</sub> = V<sub>inside</sub> − V<sub>outside</sub>, because ions such as Na<sup>+</sup>, K<sup>+</sup>, Cl<sup>−</sup>, and Ca<sup>2+</sup> are distributed unevenly across its membrane. Synaptic input opens ion channels, causing currents in dendrites and cell bodies.</p><p>At scalp level, the most important contribution is usually the slow, coordinated <strong>postsynaptic</strong> current—not the brief action potential of one cell.</p></div>
+        <div class="card"><h3>From current to voltage</h3><p>In the quasi-static approximation used for EEG, current density contains passive conduction and biological source current:</p><div class="formula">J = σE + J<sub>p</sub>, &nbsp; E = −∇V</div><p>Conservation of charge, ∇·J = 0, gives:</p><div class="formula">∇·(σ∇V) = ∇·J<sub>p</sub></div><p>In words: source currents from active neurons create an electric potential V that spreads through conductive tissue.</p></div>
+      </div>
       <div class="timeline">
         <div class="time"><strong>1. Ion movement</strong>Neurons maintain voltage differences across their cell membranes because charged ions such as sodium, potassium, chloride, and calcium are unevenly distributed.</div>
         <div class="time"><strong>2. Synaptic currents</strong>When many neurons receive input together, ions cross membrane channels. This creates tiny regions where electrical current enters and leaves the tissue.</div>
@@ -100,6 +88,14 @@
       <div class="grid" style="margin-top:22px">
         <div class="card"><h3>Why synchrony matters</h3><p>Currents from randomly oriented or unsynchronized neurons tend to cancel at a distance. When many similarly oriented cortical neurons change together, their tiny contributions add enough to be measured at the scalp.</p></div>
         <div class="card"><h3>Why the signal has rhythms</h3><p>Networks of neurons and connections can repeatedly increase and decrease their collective activity. These recurring patterns create the frequency components that the DFT reveals.</p></div>
+      </div>
+      <h3 style="margin-top:28px">How an EEG device detects the signal</h3>
+      <div class="timeline">
+        <div class="time"><strong>Electrode + gel</strong>A metal electrode and conductive gel make low-impedance contact with the scalp. The electrode does not inject current; it senses voltage.</div>
+        <div class="time"><strong>Reference</strong>Each channel is a difference: V<sub>channel</sub>(t) = V<sub>electrode</sub>(t) − V<sub>reference</sub>(t). The choice of reference affects the displayed waveform.</div>
+        <div class="time"><strong>Amplifier</strong>A high-input-impedance differential amplifier boosts microvolt-scale differences while rejecting voltage common to both inputs.</div>
+        <div class="time"><strong>Analog filter</strong>An anti-alias low-pass filter limits frequencies before sampling; other filters may reduce slow drift or line noise.</div>
+        <div class="time"><strong>Sampling</strong>The analog voltage is converted to numbers at F<sub>s</sub> = 160 samples/s. Those numbers are the input to the DFT.</div>
       </div>
       <p class="note">Physics connection: EEG is a measurement of electric potential produced by biological current flow. The Fourier analysis does not create these rhythms; it decomposes the measured voltage signal into its frequency components.</p>
     </section>
@@ -120,9 +116,20 @@
       <h2>How the Fourier transform applies to this EEG: sampling, the DFT, and the FFT</h2>
       <p>The continuous Fourier transform above explains the underlying idea. However, this EEG is not a continuous mathematical function inside the computer: the device recorded a voltage sample every 1/160 second. Therefore, the actual calculation applied to the file is the <strong>discrete Fourier transform (DFT)</strong>.</p>
       <div class="formula">x[n] = x(n/F<sub>s</sub>), &nbsp; F<sub>s</sub> = 160 Hz, &nbsp; n = 0, 1, …, N−1</div>
-      <p>The DFT compares those 160-samples-per-second values with discrete sine/cosine waves. Its result assigns an amount to each frequency bin:</p>
+      <h3>Step 1: turn the continuous transform into a sum</h3>
+      <p>Using ordinary frequency f in hertz, the continuous Fourier transform is X<sub>c</sub>(f) = ∫x(t)e<sup>−i2πft</sup>dt. Samples are separated by T<sub>s</sub> = 1/F<sub>s</sub>, so a Riemann-sum approximation over a finite recording is:</p>
+      <div class="formula">X<sub>c</sub>(f) ≈ T<sub>s</sub> Σ<sub>n=0</sub><sup>N−1</sup> x[n]e<sup>−i2πfnT<sub>s</sub></sup></div>
+      <p>That is the key bridge: an integral becomes a sum because the EEG device gives us discrete samples.</p>
+      <h3>Step 2: choose the DFT frequency grid</h3>
+      <p>For a record of N samples, evaluate at equally spaced frequencies f<sub>k</sub> = kF<sub>s</sub>/N. Substituting f<sub>k</sub> and T<sub>s</sub> = 1/F<sub>s</sub> makes the exponential e<sup>−i2πkn/N</sup>. Ignoring the constant scale T<sub>s</sub> gives the usual DFT:</p>
       <div class="formula">X[k] = Σ<sub>n = 0</sub><sup>N−1</sup> x[n]e<sup>−i2πkn/N</sup></div>
+      <p>Each X[k] measures how much the sampled EEG resembles a sine/cosine wave at f<sub>k</sub>. For a real-valued EEG, the negative-frequency coefficients mirror the positive-frequency coefficients, so the plot keeps k = 0 through N/2.</p>
       <div class="grid"><div class="card"><h3>For this EEG segment</h3><p>N = 8 × 160 = 1280 samples</p><p>Frequency resolution: Δf = F<sub>s</sub>/N = 160/1280 = <strong>0.125 Hz</strong></p><p>Nyquist frequency: F<sub>s</sub>/2 = <strong>80 Hz</strong></p><p>So the DFT tests frequencies from 0 Hz up to 80 Hz, in steps of 0.125 Hz.</p></div><div class="card"><h3>Why FFT?</h3><p>A direct DFT takes about N² operations. The Cooley–Tukey FFT recursively separates even and odd samples, reducing the work to about <strong>N log₂N</strong>.</p><p>The FFT is not a different transform—it is a faster way to calculate the same DFT.</p></div></div>
+      <h3 style="margin-top:28px">Step 3: prepare the finite EEG segment</h3>
+      <p>A finite segment has edges. If its first and last values differ sharply, that artificial jump spreads energy across many frequencies, called <strong>spectral leakage</strong>. The program removes the average and applies a Hann window:</p>
+      <div class="formula">x<sub>w</sub>[n] = (x[n] − x̄)w[n], &nbsp; w[n] = ½(1 − cos(2πn/(N−1)))</div>
+      <p>It applies the FFT to x<sub>w</sub>[n], then forms a one-sided power estimate from |X[k]|². The code normalizes by the sample rate and the window energy, doubles non-edge positive-frequency bins, and plots the result in µV²/Hz.</p>
+      <p>The recursive implementation pads 1280 samples to 2048 so its radix-2 FFT can split evenly. Zero-padding produces a denser-looking plotted grid (160/2048 Hz per displayed point), but it does <strong>not</strong> improve the true 0.125 Hz resolution determined by the original eight-second observation.</p>
     </section>
 
     <section id="real">
@@ -152,44 +159,6 @@
     function line(q,vals,color,max){const w=q.canvas.width,h=q.canvas.height; q.strokeStyle=color;q.lineWidth=2;q.beginPath();vals.forEach((v,i)=>{const x=45+i*(w-60)/(vals.length-1),y=h-32-(v/max)*(h-50);i?q.lineTo(x,y):q.moveTo(x,y)});q.stroke()}
     function update(){const f1=+$('f1').value,a1=+$('a1').value/10,f2=+$('f2').value,a2=+$('a2').value/10;$('f1out').textContent=f1+' Hz';$('a1out').textContent=a1.toFixed(1);$('f2out').textContent=f2+' Hz';$('a2out').textContent=a2.toFixed(1);const fs=128,N=256,signal=[];for(let n=0;n<N;n++){let t=n/fs;signal.push(a1*Math.sin(2*Math.PI*f1*t)+a2*Math.sin(2*Math.PI*f2*t))}const tq=drawAxes($('timeCanvas'),'Combined signal in time','time (2 s)','amplitude');const scaled=signal.map(v=>v+2.2);line(tq,scaled,'#164e88',4.4);const mags=[];for(let k=0;k<=40;k++){let re=0,im=0;for(let n=0;n<N;n++){let ang=-2*Math.PI*k*n/N;re+=signal[n]*Math.cos(ang);im+=signal[n]*Math.sin(ang)}mags.push(Math.sqrt(re*re+im*im)/N)}const fq=drawAxes($('freqCanvas'),'DFT magnitude: peaks reveal the ingredients','frequency (Hz)','magnitude');line(fq,mags,'#f97316',Math.max(...mags)*1.12);const q=fq; q.fillStyle='#475569';q.font='12px system-ui';for(let k=0;k<=40;k+=5)q.fillText(k,42+k*(fq.canvas.width-60)/40,fq.canvas.height-17)} ids.forEach(id=>$(id).addEventListener('input',update));update();
 
-    const neuronCanvas=$('neuronCanvas'), neuron=neuronCanvas.getContext('2d'), neuronStatus=$('neuronStatus');
-    let fireStart=null;
-    function neuronText(message){neuronStatus.innerHTML=message;}
-    function branch(x1,y1,x2,y2){neuron.beginPath();neuron.moveTo(x1,y1);neuron.lineTo(x2,y2);neuron.stroke();}
-    function drawNeuron(progress=-1){
-      const w=neuronCanvas.width,h=neuronCanvas.height,active=progress>=0&&progress<=1;
-      neuron.clearRect(0,0,w,h);neuron.fillStyle='#10243b';neuron.fillRect(0,0,w,h);
-      neuron.fillStyle='#eaf4ff';neuron.font='bold 18px system-ui';neuron.fillText('Pyramidal neuron: click the cell body to fire',28,32);
-      const sx=170,sy=205,axonStart=220,axonEnd=855;
-      neuron.strokeStyle='#8fb3d9';neuron.lineWidth=4;neuron.lineCap='round';
-      [[110,92],[76,145],[80,250],[120,314],[170,72],[218,88],[228,134],[231,278],[205,326]].forEach(([x,y])=>branch(sx,sy,x,y));
-      neuron.beginPath();neuron.moveTo(axonStart,sy);neuron.lineTo(axonEnd,sy);neuron.stroke();
-      neuron.strokeStyle='#507ba4';neuron.lineWidth=12;for(let x=270;x<840;x+=74){neuron.beginPath();neuron.moveTo(x,sy);neuron.lineTo(x+43,sy);neuron.stroke();}
-      neuron.fillStyle=active&&progress<.24?'#fb923c':'#59b7ae';neuron.beginPath();neuron.arc(sx,sy,45,0,Math.PI*2);neuron.fill();
-      neuron.strokeStyle='#d5f3ef';neuron.lineWidth=3;neuron.stroke();
-      neuron.fillStyle='#10243b';neuron.font='bold 14px system-ui';neuron.fillText('cell body',133,210);
-      neuron.fillStyle='#c9e4ff';neuron.font='13px system-ui';neuron.fillText('dendrites',44,63);neuron.fillText('axon',520,186);
-      neuron.setLineDash([7,7]);neuron.strokeStyle='rgba(72,198,186,.55)';neuron.lineWidth=2;
-      for(let r=74;r<175;r+=32){neuron.beginPath();neuron.ellipse(sx,sy,r,r*.57,0,0,Math.PI*2);neuron.stroke();}
-      neuron.setLineDash([]);neuron.fillStyle='#78d9d1';neuron.font='12px system-ui';neuron.fillText('electric potential spreading through tissue',270,334);
-      neuron.fillStyle='#d5f3ef';neuron.font='13px system-ui';neuron.fillText('Membrane voltage',700,68);neuron.strokeStyle='#7197bd';neuron.lineWidth=1;neuron.strokeRect(690,80,220,94);
-      neuron.strokeStyle='#a8d9ff';neuron.beginPath();for(let i=0;i<180;i++){const x=708+i,y=150-(i<58?0:i<74?(i-58)*2.35:i<108?38-(i-74)*1.15:0);i?neuron.lineTo(x,y):neuron.moveTo(x,y)}neuron.stroke();
-      neuron.fillStyle='#b7cbe0';neuron.font='11px system-ui';neuron.fillText('rest',695,164);neuron.fillText('action potential',770,164);
-      if(active){
-        const px=axonStart+(axonEnd-axonStart)*progress;
-        neuron.shadowColor='#fbbf24';neuron.shadowBlur=22;neuron.fillStyle='#fde68a';neuron.beginPath();neuron.arc(px,sy,15,0,Math.PI*2);neuron.fill();neuron.shadowBlur=0;
-        neuron.strokeStyle='#fbbf24';neuron.lineWidth=3;for(let r=26;r<72;r+=19){neuron.beginPath();neuron.ellipse(px,sy,r,r*.45,0,0,Math.PI*2);neuron.stroke();}
-        neuron.fillStyle='#fde68a';neuron.font='12px system-ui';neuron.fillText('magnetic field around current',Math.min(px+25,720),sy-54);
-        if(progress<.28){for(let i=0;i<8;i++){const a=i*Math.PI/4+progress*8,x=sx+74*Math.cos(a),y=sy+74*Math.sin(a);const endX=sx+43*Math.cos(a),endY=sy+43*Math.sin(a);neuron.strokeStyle='#fb923c';neuron.lineWidth=3;branch(x,y,endX,endY);neuron.fillStyle='#fed7aa';neuron.beginPath();neuron.arc(x,y,7,0,Math.PI*2);neuron.fill();}neuron.fillStyle='#fed7aa';neuron.font='bold 14px system-ui';neuron.fillText('Na⁺ influx',110,365);}
-      }
-    }
-    function fireNeuron(){
-      fireStart=performance.now();
-      function frame(now){const p=Math.min((now-fireStart)/3200,1);drawNeuron(p);if(p<.24)neuronText('<strong>Step 1 — Depolarization:</strong> sodium ions (Na⁺) flow inward, making the inside of the membrane less negative.');else if(p<.9)neuronText('<strong>Step 2 — Propagation:</strong> the action potential moves down the axon as a wave of membrane current.');else neuronText('<strong>Step 3 — Field:</strong> moving current produces an electric potential and a tiny surrounding magnetic field. Click the cell body to fire again.');if(p<1)requestAnimationFrame(frame);}
-      requestAnimationFrame(frame);
-    }
-    neuronCanvas.addEventListener('click',event=>{const box=neuronCanvas.getBoundingClientRect(),x=(event.clientX-box.left)*neuronCanvas.width/box.width,y=(event.clientY-box.top)*neuronCanvas.height/box.height;if((x-170)**2+(y-205)**2<70**2)fireNeuron();else neuronText('<strong>Tip:</strong> Click the large circular cell body on the left, or use the “Fire action potential” button.');});
-    $('fireNeuron').addEventListener('click',fireNeuron);drawNeuron();
   </script>
 </body>
 </html>

@@ -7,6 +7,14 @@ This project derives the Fourier transform from the Fourier series, implements
 the Fast Fourier Transform (FFT) from scratch, and applies it to a real
 experimental EEG recording.
 
+## Interactive presentation website
+
+The repository also includes a browser-based 15-minute presentation in
+[`docs/index.html`](docs/index.html). It has the real EEG result plus a live
+two-wave mixer: changing the waves immediately changes the displayed DFT
+spectrum. Follow [the short GitHub Pages instructions](docs/README.md) to put
+it online.
+
 ![Eight seconds of the Oz EEG signal and its FFT power spectrum](figures/eeg_fft_demo.png)
 
 ## The main idea

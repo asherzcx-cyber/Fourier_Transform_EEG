@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fourier Transform & EEG</title>
+  <style>
+    :root { --ink:#132238; --blue:#164e88; --teal:#0f766e; --orange:#c2410c; --paper:#f7fafc; --card:#fff; --line:#d8e1ea; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:17px/1.6 Georgia, "Times New Roman", serif; }
+    nav { position:sticky; top:0; z-index:2; background:#10243b; padding:10px 4vw; font:600 14px/1.2 system-ui,sans-serif; }
+    nav a { color:#eaf4ff; margin-right:18px; text-decoration:none; white-space:nowrap; }
+    header { color:#fff; background:linear-gradient(125deg,#10243b,#164e88); padding:78px 8vw 68px; }
+    header p { max-width:760px; font-size:1.25rem; }
+    h1,h2,h3 { font-family:system-ui,-apple-system,sans-serif; line-height:1.15; }
+    h1 { max-width:800px; font-size:clamp(2.5rem,6vw,5.2rem); margin:0 0 18px; }
+    h2 { font-size:2rem; margin-top:0; }
+    main { max-width:1080px; margin:auto; padding:42px 24px 90px; }
+    section { margin:0 0 34px; padding:34px; background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 3px 14px #1322380d; }
+    .tag { display:inline-block; border:1px solid #8cc8c2; color:#075d57; background:#e7f7f4; border-radius:999px; padding:4px 10px; font:700 12px system-ui,sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+    .timeline { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:22px; }
+    .time { border-left:4px solid var(--teal); background:#effaf8; padding:12px; font-family:system-ui,sans-serif; }
+    .time strong { display:block; color:var(--teal); }
+    .formula { margin:22px 0; padding:18px; overflow:auto; text-align:center; border-left:4px solid var(--orange); background:#fff7ed; font-size:1.2rem; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+    .card { padding:20px; border:1px solid var(--line); border-radius:12px; }
+    table { width:100%; border-collapse:collapse; font-family:system-ui,sans-serif; font-size:.95rem; }
+    th,td { padding:9px; text-align:left; border-bottom:1px solid var(--line); }
+    th { color:var(--blue); }
+    img { width:100%; border:1px solid var(--line); border-radius:12px; }
+    .demo { background:#10243b; color:#eef6ff; }
+    .demo h2 { color:#fff; }
+    .controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px 25px; font-family:system-ui,sans-serif; }
+    label { display:block; font-size:.9rem; font-weight:700; }
+    input { width:100%; accent-color:#48c6ba; }
+    output { float:right; color:#73e2d8; }
+    canvas { width:100%; display:block; margin-top:22px; background:#fff; border-radius:10px; }
+    .note { padding:14px 16px; border-left:4px solid var(--teal); background:#effaf8; }
+    code { font:14px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    footer { text-align:center; color:#536273; font:14px system-ui,sans-serif; padding:24px; }
+    @media (max-width:700px) { .timeline,.grid,.controls { grid-template-columns:1fr; } section { padding:23px; } nav { overflow:auto; white-space:nowrap; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#math">Math</a><a href="#fft">FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
+  </nav>
+  <header>
+    <span class="tag">15-minute math presentation</span>
+    <h1>Fourier Transform &amp; EEG</h1>
+    <p>How can a messy-looking brain-wave recording be described as a combination of simple waves?</p>
+  </header>
+  <main>
+    <section id="question">
+      <span class="tag">0–1 minute</span>
+      <h2>The question</h2>
+      <p>An EEG shows voltage changing over time. The Fourier transform views the exact same signal in another way: it asks which frequencies contribute to it.</p>
+      <div class="timeline">
+        <div class="time"><strong>1 min</strong>Question</div><div class="time"><strong>2 min</strong>What EEG measures</div><div class="time"><strong>5 min</strong>Derivation</div><div class="time"><strong>3 min</strong>FFT</div><div class="time"><strong>4 min</strong>Real data + demo</div>
+      </div>
+    </section>
+
+    <section id="eeg">
+      <span class="tag">1–3 minutes</span>
+      <h2>What does EEG measure?</h2>
+      <div class="grid">
+        <div><p>Electroencephalography uses scalp electrodes to measure tiny changes in voltage caused by the combined activity of many neurons. It is not a direct recording of one neuron, a thought, or a diagnosis.</p><p>An EEG device samples the signal repeatedly. Those samples are the input to the discrete Fourier transform.</p></div>
+        <div class="card"><table><tr><th>Recording property</th><th>Value</th></tr><tr><td>EEG channels</td><td>64</td></tr><tr><td>Example electrode</td><td>Oz</td></tr><tr><td>Sampling rate</td><td>160 Hz</td></tr><tr><td>Length</td><td>61 s</td></tr><tr><td>Analyzed segment</td><td>8 s</td></tr></table></div>
+      </div>
+      <p class="note">Why Fourier analysis is appropriate: a short EEG segment can be modeled as a mixture of oscillations at different frequencies, plus noise and artifacts.</p>
+      <div class="formula">EEG(t) ≈ Σ A<sub>j</sub> cos(2πf<sub>j</sub>t + φ<sub>j</sub>) + noise</div>
+    </section>
+
+    <section id="math">
+      <span class="tag">3–8 minutes</span>
+      <h2>From Fourier series to the Fourier transform</h2>
+      <p>For a periodic signal with period <em>T</em>, Fourier series represents the signal as a sum of harmonics:</p>
+      <div class="formula">x(t) = Σ<sub>k = −∞</sub><sup>∞</sup> c<sub>k</sub>e<sup>ikω₀t</sup>, &nbsp; where ω₀ = 2π/T</div>
+      <p>The coefficient c<sub>k</sub> measures the contribution of frequency kω₀. Orthogonality of the complex waves lets us isolate it:</p>
+      <div class="formula">c<sub>k</sub> = (1/T) ∫<sub>−T/2</sub><sup>T/2</sup> x(t)e<sup>−ikω₀t</sup> dt</div>
+      <p>Now let the period grow without bound. The spacing between allowable frequencies is Δω = 2π/T. As T → ∞, Δω → 0: discrete frequency values become continuous, and the Fourier-series sum becomes an integral.</p>
+      <div class="formula">X(ω) = ∫<sub>−∞</sub><sup>∞</sup> x(t)e<sup>−iωt</sup> dt</div>
+      <div class="formula">x(t) = (1/2π) ∫<sub>−∞</sub><sup>∞</sup> X(ω)e<sup>iωt</sup> dω</div>
+      <p class="note">The big idea: the time-domain signal and frequency-domain spectrum are two descriptions of the same information.</p>
+    </section>
+
+    <section id="fft">
+      <span class="tag">8–11 minutes</span>
+      <h2>Sampling, the DFT, and the FFT</h2>
+      <p>A computer has samples x[0], x[1], …, x[N−1], not a continuous curve. Its DFT is:</p>
+      <div class="formula">X[k] = Σ<sub>n = 0</sub><sup>N−1</sup> x[n]e<sup>−i2πkn/N</sup></div>
+      <div class="grid"><div class="card"><h3>For this EEG segment</h3><p>N = 8 × 160 = 1280 samples</p><p>Frequency resolution: Δf = F<sub>s</sub>/N = 160/1280 = <strong>0.125 Hz</strong></p><p>Nyquist frequency: F<sub>s</sub>/2 = <strong>80 Hz</strong></p></div><div class="card"><h3>Why FFT?</h3><p>A direct DFT takes about N² operations. The Cooley–Tukey FFT recursively separates even and odd samples, reducing the work to about <strong>N log₂N</strong>.</p><p>The FFT is not a different transform—it is a faster way to calculate the same DFT.</p></div></div>
+    </section>
+
+    <section id="real">
+      <span class="tag">11–13 minutes</span>
+      <h2>Applying it to a real EEG</h2>
+      <p>The analysis selects eight seconds from electrode <code>Oz</code>, subtracts its average, applies a Hann window to reduce edge effects, and calculates power |X[k]|² at every frequency.</p>
+      <img src="eeg_fft_demo.png" alt="Oz EEG waveform from 5 to 13 seconds and its power spectrum from 0 to 45 hertz">
+      <p>The lower plot has peaks at frequencies that were prominent in this segment. Standard EEG band names include delta (0.5–4 Hz), theta (4–8 Hz), alpha (8–13 Hz), beta (13–30 Hz), and gamma (30–80 Hz). The graph is a signal description, not a medical conclusion.</p>
+    </section>
+
+    <section id="demo" class="demo">
+      <span class="tag">Live demo: 13–15 minutes</span>
+      <h2>Build a signal, then reveal its frequencies</h2>
+      <p>Change the two waves. The upper graph is their combined time-domain signal; the lower graph is its spectrum. The peaks appear at the frequencies you chose.</p>
+      <div class="controls">
+        <label>Wave 1 frequency <output id="f1out">8 Hz</output><input id="f1" type="range" min="1" max="30" value="8"></label>
+        <label>Wave 1 amplitude <output id="a1out">1.0</output><input id="a1" type="range" min="0" max="20" value="10"></label>
+        <label>Wave 2 frequency <output id="f2out">14 Hz</output><input id="f2" type="range" min="1" max="30" value="14"></label>
+        <label>Wave 2 amplitude <output id="a2out">0.6</output><input id="a2" type="range" min="0" max="20" value="6"></label>
+      </div>
+      <canvas id="timeCanvas" width="950" height="230" aria-label="Interactive time-domain signal"></canvas>
+      <canvas id="freqCanvas" width="950" height="230" aria-label="Interactive frequency spectrum"></canvas>
+    </section>
+  </main>
+  <footer>Educational demonstration · Fourier transform and EEG · Use the source repository for the full derivation and code.</footer>
+  <script>
+    const ids=['f1','a1','f2','a2']; const $=id=>document.getElementById(id);
+    function drawAxes(c,title,xlabel,ylabel){const q=c.getContext('2d'),w=c.width,h=c.height;q.clearRect(0,0,w,h);q.fillStyle='#fff';q.fillRect(0,0,w,h);q.strokeStyle='#d8e1ea';q.lineWidth=1;for(let i=1;i<5;i++){q.beginPath();q.moveTo(45,i*h/5);q.lineTo(w-15,i*h/5);q.stroke()}q.strokeStyle='#718096';q.beginPath();q.moveTo(45,15);q.lineTo(45,h-32);q.lineTo(w-15,h-32);q.stroke();q.fillStyle='#132238';q.font='bold 15px system-ui';q.fillText(title,52,23);q.font='12px system-ui';q.fillText(xlabel,w-130,h-9);q.save();q.translate(14,h/2);q.rotate(-Math.PI/2);q.fillText(ylabel,0,0);q.restore();return q}
+    function line(q,vals,color,max){const w=q.canvas.width,h=q.canvas.height; q.strokeStyle=color;q.lineWidth=2;q.beginPath();vals.forEach((v,i)=>{const x=45+i*(w-60)/(vals.length-1),y=h-32-(v/max)*(h-50);i?q.lineTo(x,y):q.moveTo(x,y)});q.stroke()}
+    function update(){const f1=+$('f1').value,a1=+$('a1').value/10,f2=+$('f2').value,a2=+$('a2').value/10;$('f1out').textContent=f1+' Hz';$('a1out').textContent=a1.toFixed(1);$('f2out').textContent=f2+' Hz';$('a2out').textContent=a2.toFixed(1);const fs=128,N=256,signal=[];for(let n=0;n<N;n++){let t=n/fs;signal.push(a1*Math.sin(2*Math.PI*f1*t)+a2*Math.sin(2*Math.PI*f2*t))}const tq=drawAxes($('timeCanvas'),'Combined signal in time','time (2 s)','amplitude');const scaled=signal.map(v=>v+2.2);line(tq,scaled,'#164e88',4.4);const mags=[];for(let k=0;k<=40;k++){let re=0,im=0;for(let n=0;n<N;n++){let ang=-2*Math.PI*k*n/N;re+=signal[n]*Math.cos(ang);im+=signal[n]*Math.sin(ang)}mags.push(Math.sqrt(re*re+im*im)/N)}const fq=drawAxes($('freqCanvas'),'DFT magnitude: peaks reveal the ingredients','frequency (Hz)','magnitude');line(fq,mags,'#f97316',Math.max(...mags)*1.12);const q=fq; q.fillStyle='#475569';q.font='12px system-ui';for(let k=0;k<=40;k+=5)q.fillText(k,42+k*(fq.canvas.width-60)/40,fq.canvas.height-17)} ids.forEach(id=>$(id).addEventListener('input',update));update();
+  </script>
+</body>
+</html>

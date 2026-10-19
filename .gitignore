@@ -1,5 +1,6 @@
 .DS_Store
 .venv/
+.pnpm-store/
 __pycache__/
 *.py[cod]
 data/*.edf

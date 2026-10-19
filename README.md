@@ -11,11 +11,11 @@ actually computes a discrete Fourier transform (DFT) using an FFT algorithm.
 
 ## Interactive presentation website
 
-The repository also includes a browser-based interactive presentation in
-[`docs/index.html`](docs/index.html). It has the real EEG result plus a live
-two-wave mixer: changing the waves immediately changes the displayed DFT
-spectrum. Follow [the short GitHub Pages instructions](docs/README.md) to put
-it online.
+Open the live demo at [fouriertransformeeg.netlify.app](https://fouriertransformeeg.netlify.app/).
+
+The browser-based presentation has the real EEG result plus a live two-wave
+mixer: changing the waves immediately changes the displayed DFT spectrum. Its
+source is in [`docs/index.html`](docs/index.html).
 
 ### Deploy the presentation with Netlify
 

@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Fourier Transform & EEG</title>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     :root { --ink:#132238; --blue:#164e88; --teal:#0f766e; --orange:#c2410c; --paper:#f7fafc; --card:#fff; --line:#d8e1ea; }
     * { box-sizing:border-box; }
@@ -67,7 +68,7 @@
         <div class="card"><table><tr><th>Recording property</th><th>Value</th></tr><tr><td>EEG channels</td><td>64</td></tr><tr><td>Example electrode</td><td>Oz</td></tr><tr><td>Sampling rate</td><td>160 Hz</td></tr><tr><td>Length</td><td>61 s</td></tr><tr><td>Analyzed segment</td><td>8 s</td></tr></table></div>
       </div>
       <p class="note">Why Fourier analysis is appropriate: a short EEG segment can be modeled as a mixture of oscillations at different frequencies, plus noise and artifacts.</p>
-      <div class="formula">EEG(t) ≈ Σ A<sub>j</sub> cos(2πf<sub>j</sub>t + φ<sub>j</sub>) + noise</div>
+      <div class="formula">\[\operatorname{EEG}(t) \approx \sum_j A_j\cos\left(2\pi f_jt+\phi_j\right)+\text{noise}\]</div>
     </section>
 
     <section id="source">
@@ -75,8 +76,8 @@
       <h2>Where does an EEG signal come from?</h2>
       <p>EEG is not a recording of individual action potentials. At the scalp, it mainly reflects the summed, synchronized electrical activity of large populations of cortical neurons—especially the long, similarly oriented <strong>pyramidal neurons</strong> in the cerebral cortex.</p>
       <div class="grid">
-        <div class="card"><h3>Electrochemical origin</h3><p>Each neuron maintains a membrane voltage, defined as V<sub>m</sub> = V<sub>inside</sub> − V<sub>outside</sub>, because ions such as Na<sup>+</sup>, K<sup>+</sup>, Cl<sup>−</sup>, and Ca<sup>2+</sup> are distributed unevenly across its membrane. Synaptic input opens ion channels, causing currents in dendrites and cell bodies.</p><p>At scalp level, the most important contribution is usually the slow, coordinated <strong>postsynaptic</strong> current—not the brief action potential of one cell.</p></div>
-        <div class="card"><h3>From current to voltage</h3><p>In the quasi-static approximation used for EEG, current density contains passive conduction and biological source current:</p><div class="formula">J = σE + J<sub>p</sub>, &nbsp; E = −∇V</div><p>Conservation of charge, ∇·J = 0, gives:</p><div class="formula">∇·(σ∇V) = ∇·J<sub>p</sub></div><p>In words: source currents from active neurons create an electric potential V that spreads through conductive tissue.</p></div>
+        <div class="card"><h3>Electrochemical origin</h3><p>Each neuron maintains a membrane voltage, defined as \(V_m=V_{\text{inside}}-V_{\text{outside}}\), because ions such as \(\mathrm{Na}^+\), \(\mathrm{K}^+\), \(\mathrm{Cl}^-\), and \(\mathrm{Ca}^{2+}\) are distributed unevenly across its membrane. Synaptic input opens ion channels, causing currents in dendrites and cell bodies.</p><p>At scalp level, the most important contribution is usually the slow, coordinated <strong>postsynaptic</strong> current—not the brief action potential of one cell.</p></div>
+        <div class="card"><h3>From current to voltage</h3><p>In the quasi-static approximation used for EEG, current density contains passive conduction and biological source current:</p><div class="formula">\[\mathbf{J}=\sigma\mathbf{E}+\mathbf{J}_p, \qquad \mathbf{E}=-\nabla V\]</div><p>Conservation of charge, \(\nabla\cdot\mathbf{J}=0\), gives:</p><div class="formula">\[\nabla\cdot\left(\sigma\nabla V\right)=\nabla\cdot\mathbf{J}_p\]</div><p>In words: source currents from active neurons create an electric potential \(V\) that spreads through conductive tissue.</p></div>
       </div>
       <div class="timeline">
         <div class="time"><strong>1. Ion movement</strong>Neurons maintain voltage differences across their cell membranes because charged ions such as sodium, potassium, chloride, and calcium are unevenly distributed.</div>
@@ -103,31 +104,31 @@
     <section id="math">
       <h2>From Fourier series to the Fourier transform</h2>
       <p>For a periodic signal with period <em>T</em>, Fourier series represents the signal as a sum of harmonics:</p>
-      <div class="formula">x(t) = Σ<sub>k = −∞</sub><sup>∞</sup> c<sub>k</sub>e<sup>ikω₀t</sup>, &nbsp; where ω₀ = 2π/T</div>
+      <div class="formula">\[x(t)=\sum_{k=-\infty}^{\infty}c_ke^{ik\omega_0t}, \qquad \omega_0=\frac{2\pi}{T}\]</div>
       <p>The coefficient c<sub>k</sub> measures the contribution of frequency kω₀. Orthogonality of the complex waves lets us isolate it:</p>
-      <div class="formula">c<sub>k</sub> = (1/T) ∫<sub>−T/2</sub><sup>T/2</sup> x(t)e<sup>−ikω₀t</sup> dt</div>
+      <div class="formula">\[c_k=\frac{1}{T}\int_{-T/2}^{T/2}x(t)e^{-ik\omega_0t}\,dt\]</div>
       <p>Now let the period grow without bound. The spacing between allowable frequencies is Δω = 2π/T. As T → ∞, Δω → 0: discrete frequency values become continuous, and the Fourier-series sum becomes an integral.</p>
-      <div class="formula">X(ω) = ∫<sub>−∞</sub><sup>∞</sup> x(t)e<sup>−iωt</sup> dt</div>
-      <div class="formula">x(t) = (1/2π) ∫<sub>−∞</sub><sup>∞</sup> X(ω)e<sup>iωt</sup> dω</div>
+      <div class="formula">\[X(\omega)=\int_{-\infty}^{\infty}x(t)e^{-i\omega t}\,dt\]</div>
+      <div class="formula">\[x(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty}X(\omega)e^{i\omega t}\,d\omega\]</div>
       <p class="note">The big idea: the time-domain signal and frequency-domain spectrum are two descriptions of the same information.</p>
     </section>
 
     <section id="fft">
       <h2>How the Fourier transform applies to this EEG: sampling, the DFT, and the FFT</h2>
       <p>The continuous Fourier transform above explains the underlying idea. However, this EEG is not a continuous mathematical function inside the computer: the device recorded a voltage sample every 1/160 second. Therefore, the actual calculation applied to the file is the <strong>discrete Fourier transform (DFT)</strong>.</p>
-      <div class="formula">x[n] = x(n/F<sub>s</sub>), &nbsp; F<sub>s</sub> = 160 Hz, &nbsp; n = 0, 1, …, N−1</div>
+      <div class="formula">\[x[n]=x\!\left(\frac{n}{F_s}\right), \qquad F_s=160\ \text{Hz}, \qquad n=0,1,\ldots,N-1\]</div>
       <h3>Step 1: turn the continuous transform into a sum</h3>
-      <p>Using ordinary frequency f in hertz, the continuous Fourier transform is X<sub>c</sub>(f) = ∫x(t)e<sup>−i2πft</sup>dt. Samples are separated by T<sub>s</sub> = 1/F<sub>s</sub>, so a Riemann-sum approximation over a finite recording is:</p>
-      <div class="formula">X<sub>c</sub>(f) ≈ T<sub>s</sub> Σ<sub>n=0</sub><sup>N−1</sup> x[n]e<sup>−i2πfnT<sub>s</sub></sup></div>
+      <p>Using ordinary frequency \(f\) in hertz, the continuous Fourier transform is \(X_c(f)=\int_{-\infty}^{\infty}x(t)e^{-i2\pi ft}\,dt\). Samples are separated by \(T_s=1/F_s\), so a Riemann-sum approximation over a finite recording is:</p>
+      <div class="formula">\[X_c(f)\approx T_s\sum_{n=0}^{N-1}x[n]e^{-i2\pi fnT_s}\]</div>
       <p>That is the key bridge: an integral becomes a sum because the EEG device gives us discrete samples.</p>
       <h3>Step 2: choose the DFT frequency grid</h3>
-      <p>For a record of N samples, evaluate at equally spaced frequencies f<sub>k</sub> = kF<sub>s</sub>/N. Substituting f<sub>k</sub> and T<sub>s</sub> = 1/F<sub>s</sub> makes the exponential e<sup>−i2πkn/N</sup>. Ignoring the constant scale T<sub>s</sub> gives the usual DFT:</p>
-      <div class="formula">X[k] = Σ<sub>n = 0</sub><sup>N−1</sup> x[n]e<sup>−i2πkn/N</sup></div>
+      <p>For a record of \(N\) samples, evaluate at equally spaced frequencies \(f_k=kF_s/N\). Substituting \(f_k\) and \(T_s=1/F_s\) makes the exponential \(e^{-i2\pi kn/N}\). Ignoring the constant scale \(T_s\) gives the usual DFT:</p>
+      <div class="formula">\[X[k]=\sum_{n=0}^{N-1}x[n]e^{-i2\pi kn/N}\]</div>
       <p>Each X[k] measures how much the sampled EEG resembles a sine/cosine wave at f<sub>k</sub>. For a real-valued EEG, the negative-frequency coefficients mirror the positive-frequency coefficients, so the plot keeps k = 0 through N/2.</p>
       <div class="grid"><div class="card"><h3>For this EEG segment</h3><p>N = 8 × 160 = 1280 samples</p><p>Frequency resolution: Δf = F<sub>s</sub>/N = 160/1280 = <strong>0.125 Hz</strong></p><p>Nyquist frequency: F<sub>s</sub>/2 = <strong>80 Hz</strong></p><p>So the DFT tests frequencies from 0 Hz up to 80 Hz, in steps of 0.125 Hz.</p></div><div class="card"><h3>Why FFT?</h3><p>A direct DFT takes about N² operations. The Cooley–Tukey FFT recursively separates even and odd samples, reducing the work to about <strong>N log₂N</strong>.</p><p>The FFT is not a different transform—it is a faster way to calculate the same DFT.</p></div></div>
       <h3 style="margin-top:28px">Step 3: prepare the finite EEG segment</h3>
       <p>A finite segment has edges. If its first and last values differ sharply, that artificial jump spreads energy across many frequencies, called <strong>spectral leakage</strong>. The program removes the average and applies a Hann window:</p>
-      <div class="formula">x<sub>w</sub>[n] = (x[n] − x̄)w[n], &nbsp; w[n] = ½(1 − cos(2πn/(N−1)))</div>
+      <div class="formula">\[x_w[n]=(x[n]-\bar{x})w[n], \qquad w[n]=\frac12\left(1-\cos\!\left(\frac{2\pi n}{N-1}\right)\right)\]</div>
       <p>It applies the FFT to x<sub>w</sub>[n], then forms a one-sided power estimate from |X[k]|². The code normalizes by the sample rate and the window energy, doubles non-edge positive-frequency bins, and plots the result in µV²/Hz.</p>
       <p>The recursive implementation pads 1280 samples to 2048 so its radix-2 FFT can split evenly. Zero-padding produces a denser-looking plotted grid (160/2048 Hz per displayed point), but it does <strong>not</strong> improve the true 0.125 Hz resolution determined by the original eight-second observation.</p>
     </section>

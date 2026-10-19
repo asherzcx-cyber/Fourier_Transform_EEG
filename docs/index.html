@@ -30,6 +30,9 @@
     th,td { padding:9px; text-align:left; border-bottom:1px solid var(--line); }
     th { color:var(--blue); }
     img { width:100%; border:1px solid var(--line); border-radius:12px; }
+    .eeg-photo { max-width:620px; margin:20px auto 24px; }
+    .eeg-photo img { display:block; max-height:430px; object-fit:cover; object-position:top; }
+    .eeg-photo figcaption { margin-top:9px; color:var(--muted); font-family:system-ui,sans-serif; font-size:.88rem; line-height:1.45; text-align:center; }
     .demo { background:#10243b; color:#eef6ff; }
     .demo h2 { color:#fff; }
     .controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px 25px; font-family:system-ui,sans-serif; }
@@ -91,6 +94,10 @@
         <div class="card"><h3>Why the signal has rhythms</h3><p>Networks of neurons and connections can repeatedly increase and decrease their collective activity. These recurring patterns create the frequency components that the DFT reveals.</p></div>
       </div>
       <h3 style="margin-top:28px">How an EEG device detects the signal</h3>
+      <figure class="eeg-photo">
+        <img src="eeg-headset-photo.png" alt="Student wearing an EEG headset during recording">
+        <figcaption>EEG headset used during recording. Electrodes contact the scalp through conductive material so the system can measure voltage differences.</figcaption>
+      </figure>
       <div class="timeline">
         <div class="time"><strong>Electrode + gel</strong>A metal electrode and conductive gel make low-impedance contact with the scalp. The electrode does not inject current; it senses voltage.</div>
         <div class="time"><strong>Reference</strong>Each channel is a difference: V<sub>channel</sub>(t) = V<sub>electrode</sub>(t) − V<sub>reference</sub>(t). The choice of reference affects the displayed waveform.</div>

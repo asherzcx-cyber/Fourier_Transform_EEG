@@ -17,6 +17,20 @@ two-wave mixer: changing the waves immediately changes the displayed DFT
 spectrum. Follow [the short GitHub Pages instructions](docs/README.md) to put
 it online.
 
+### Deploy the presentation with Netlify
+
+This repository is configured for a zero-build Netlify deployment. In Netlify,
+choose **Add new site → Import an existing project**, connect this GitHub
+repository, and keep the detected settings:
+
+| Netlify setting | Value |
+| --- | --- |
+| Build command | Leave blank |
+| Publish directory | `docs` |
+
+Deploy the site. Netlify will serve `docs/index.html` as the homepage and will
+automatically rebuild the site whenever you push changes to GitHub.
+
 ![Eight seconds of the Oz EEG signal and its FFT power spectrum](figures/eeg_fft_demo.png)
 
 ## The main idea

@@ -1,0 +1,9 @@
+# The presentation is a self-contained static website in docs/.
+# Netlify needs no build command or server-side runtime for this project.
+[build]
+  publish = "docs"
+  command = ""
+
+[build.environment]
+  NODE_VERSION = "20"
+

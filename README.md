@@ -1,21 +1,30 @@
 # Fourier Transform and EEG
 
-This is a math-class project that follows one idea from theory to real data:
+> How can a complicated brain-wave recording be described as a combination of
+> simple waves?
 
-> A complicated signal can be expressed as a combination of simple waves.
+This math-class project derives the Fourier transform from the Fourier series,
+implements a Fast Fourier Transform (FFT) from scratch, and applies it to a
+real experimental EEG recording.
 
-It derives the Fourier transform from the Fourier series, implements a Fast
-Fourier Transform (FFT) from scratch, and uses that code to examine an
-experimental EEG recording.
+## Start here
+
+**For a class presentation, open [the presentation walkthrough](presentation.md).**
+It is organized as a short talk with speaker cues, equations, and the real EEG
+result. The remaining files let classmates inspect the mathematics and code.
+
+![An Oz EEG trace and its FFT power spectrum](figures/eeg_fft_demo.png)
 
 ## Project map
 
 | File | Purpose |
 | --- | --- |
-| `derivation.md` | Fourier series → continuous Fourier transform → DFT |
-| `fft_from_scratch.py` | Readable recursive Cooley--Tukey FFT |
-| `eeg_analysis.py` | EDF reader, analysis, and figure generator |
-| `figures/eeg_fft_demo.png` | Generated time-domain and frequency-domain plot |
+| [presentation.md](presentation.md) | Class-ready walkthrough and speaking outline |
+| [derivation.md](derivation.md) | Full Fourier series → Fourier transform → DFT derivation |
+| [fft_from_scratch.py](fft_from_scratch.py) | Readable recursive Cooley--Tukey FFT |
+| [eeg_analysis.py](eeg_analysis.py) | EDF reader, analysis, and figure generator |
+| [figures/eeg_fft_demo.png](figures/eeg_fft_demo.png) | Plot generated from the supplied recording |
+| [data/README.md](data/README.md) | How to work with the local EDF file |
 
 ## Set up and run
 
@@ -73,4 +82,3 @@ without aliasing; 80 Hz is the Nyquist frequency.
 
 This is an educational signal-processing demonstration, not clinical EEG
 analysis or medical interpretation.
-

@@ -44,7 +44,7 @@
 </head>
 <body>
   <nav>
-    <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#math">Math</a><a href="#fft">FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
+    <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#source">Signal source</a><a href="#math">Math</a><a href="#fft">DFT + FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
   </nav>
   <header>
     <span class="tag">Math presentation</span>
@@ -68,6 +68,24 @@
       </div>
       <p class="note">Why Fourier analysis is appropriate: a short EEG segment can be modeled as a mixture of oscillations at different frequencies, plus noise and artifacts.</p>
       <div class="formula">EEG(t) ≈ Σ A<sub>j</sub> cos(2πf<sub>j</sub>t + φ<sub>j</sub>) + noise</div>
+    </section>
+
+    <section id="source">
+      <span class="tag">Neuroscience + physics</span>
+      <h2>Where does an EEG signal come from?</h2>
+      <p>EEG is not a recording of individual action potentials. At the scalp, it mainly reflects the summed, synchronized electrical activity of large populations of cortical neurons—especially the long, similarly oriented <strong>pyramidal neurons</strong> in the cerebral cortex.</p>
+      <div class="timeline">
+        <div class="time"><strong>1. Ion movement</strong>Neurons maintain voltage differences across their cell membranes because charged ions such as sodium, potassium, chloride, and calcium are unevenly distributed.</div>
+        <div class="time"><strong>2. Synaptic currents</strong>When many neurons receive input together, ions cross membrane channels. This creates tiny regions where electrical current enters and leaves the tissue.</div>
+        <div class="time"><strong>3. A current dipole</strong>With many aligned pyramidal cells active together, the separated current source and sink act approximately like an electrical dipole.</div>
+        <div class="time"><strong>4. Volume conduction</strong>The resulting electric potential spreads through brain tissue, cerebrospinal fluid, skull, and scalp. The skull blurs and weakens the signal.</div>
+        <div class="time"><strong>5. Electrode measurement</strong>An electrode measures the potential difference between one scalp location and a reference electrode. An amplifier records it in microvolts.</div>
+      </div>
+      <div class="grid" style="margin-top:22px">
+        <div class="card"><h3>Why synchrony matters</h3><p>Currents from randomly oriented or unsynchronized neurons tend to cancel at a distance. When many similarly oriented cortical neurons change together, their tiny contributions add enough to be measured at the scalp.</p></div>
+        <div class="card"><h3>Why the signal has rhythms</h3><p>Networks of neurons and connections can repeatedly increase and decrease their collective activity. These recurring patterns create the frequency components that the DFT reveals.</p></div>
+      </div>
+      <p class="note">Physics connection: EEG is a measurement of electric potential produced by biological current flow. The Fourier analysis does not create these rhythms; it decomposes the measured voltage signal into its frequency components.</p>
     </section>
 
     <section id="math">

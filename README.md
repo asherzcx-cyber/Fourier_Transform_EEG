@@ -55,6 +55,27 @@ sequence of numbers, which is exactly the kind of data the DFT and FFT analyze.
 > This is an educational signal-processing demonstration, not clinical EEG
 > analysis or medical interpretation.
 
+### Where the measured voltage comes from: neuroscience and physics
+
+Neurons maintain voltage differences across their cell membranes because ions
+are unevenly distributed inside and outside the cell. When synaptic input opens
+ion channels, small electrical currents enter and leave the tissue. Many
+similarly oriented cortical pyramidal neurons that receive synchronized input
+can create a combined **current dipole**: one region acts approximately as a
+current source and another as a current sink.
+
+The resulting electric potential spreads through brain tissue, cerebrospinal
+fluid, skull, and scalp; this is called **volume conduction**. A scalp EEG
+electrode measures a potential difference between its location and a reference
+electrode, after amplification, usually in microvolts. The skull weakens and
+blurs the signal, so EEG primarily reflects the summed activity of large
+neuron populations rather than individual action potentials.
+
+Synchrony matters: randomly oriented or uncoordinated neuronal currents tend
+to cancel at the scalp, while many similarly oriented neurons changing together
+can produce a detectable rhythm. Fourier analysis decomposes that measured
+voltage rhythm into frequency components; it does not create the rhythms.
+
 ---
 
 ## 2. Why can we apply a Fourier transform to EEG?

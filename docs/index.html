@@ -47,22 +47,20 @@
     <a href="#question">Question</a><a href="#eeg">EEG</a><a href="#math">Math</a><a href="#fft">FFT</a><a href="#real">Real data</a><a href="#demo">Live demo</a>
   </nav>
   <header>
-    <span class="tag">15-minute math presentation</span>
+    <span class="tag">Math presentation</span>
     <h1>Fourier Transform &amp; EEG</h1>
     <p>How can a messy-looking brain-wave recording be described as a combination of simple waves?</p>
   </header>
   <main>
     <section id="question">
-      <span class="tag">0–1 minute</span>
       <h2>The question</h2>
       <p>An EEG shows voltage changing over time. The Fourier transform views the exact same signal in another way: it asks which frequencies contribute to it.</p>
       <div class="timeline">
-        <div class="time"><strong>1 min</strong>Question</div><div class="time"><strong>2 min</strong>What EEG measures</div><div class="time"><strong>5 min</strong>Derivation</div><div class="time"><strong>3 min</strong>FFT</div><div class="time"><strong>4 min</strong>Real data + demo</div>
+        <div class="time"><strong>Question</strong>What is hidden in the signal?</div><div class="time"><strong>EEG</strong>How is the data recorded?</div><div class="time"><strong>Derivation</strong>From Fourier series to a transform</div><div class="time"><strong>DFT and FFT</strong>How a computer calculates it</div><div class="time"><strong>Real data</strong>Apply it to the EEG recording</div>
       </div>
     </section>
 
     <section id="eeg">
-      <span class="tag">1–3 minutes</span>
       <h2>What does EEG measure?</h2>
       <div class="grid">
         <div><p>Electroencephalography uses scalp electrodes to measure tiny changes in voltage caused by the combined activity of many neurons. It is not a direct recording of one neuron, a thought, or a diagnosis.</p><p>An EEG device samples the signal repeatedly. Those samples are the input to the discrete Fourier transform.</p></div>
@@ -73,7 +71,6 @@
     </section>
 
     <section id="math">
-      <span class="tag">3–8 minutes</span>
       <h2>From Fourier series to the Fourier transform</h2>
       <p>For a periodic signal with period <em>T</em>, Fourier series represents the signal as a sum of harmonics:</p>
       <div class="formula">x(t) = Σ<sub>k = −∞</sub><sup>∞</sup> c<sub>k</sub>e<sup>ikω₀t</sup>, &nbsp; where ω₀ = 2π/T</div>
@@ -86,23 +83,22 @@
     </section>
 
     <section id="fft">
-      <span class="tag">8–11 minutes</span>
-      <h2>Sampling, the DFT, and the FFT</h2>
-      <p>A computer has samples x[0], x[1], …, x[N−1], not a continuous curve. Its DFT is:</p>
+      <h2>How the Fourier transform applies to this EEG: sampling, the DFT, and the FFT</h2>
+      <p>The continuous Fourier transform above explains the underlying idea. However, this EEG is not a continuous mathematical function inside the computer: the device recorded a voltage sample every 1/160 second. Therefore, the actual calculation applied to the file is the <strong>discrete Fourier transform (DFT)</strong>.</p>
+      <div class="formula">x[n] = x(n/F<sub>s</sub>), &nbsp; F<sub>s</sub> = 160 Hz, &nbsp; n = 0, 1, …, N−1</div>
+      <p>The DFT compares those 160-samples-per-second values with discrete sine/cosine waves. Its result assigns an amount to each frequency bin:</p>
       <div class="formula">X[k] = Σ<sub>n = 0</sub><sup>N−1</sup> x[n]e<sup>−i2πkn/N</sup></div>
-      <div class="grid"><div class="card"><h3>For this EEG segment</h3><p>N = 8 × 160 = 1280 samples</p><p>Frequency resolution: Δf = F<sub>s</sub>/N = 160/1280 = <strong>0.125 Hz</strong></p><p>Nyquist frequency: F<sub>s</sub>/2 = <strong>80 Hz</strong></p></div><div class="card"><h3>Why FFT?</h3><p>A direct DFT takes about N² operations. The Cooley–Tukey FFT recursively separates even and odd samples, reducing the work to about <strong>N log₂N</strong>.</p><p>The FFT is not a different transform—it is a faster way to calculate the same DFT.</p></div></div>
+      <div class="grid"><div class="card"><h3>For this EEG segment</h3><p>N = 8 × 160 = 1280 samples</p><p>Frequency resolution: Δf = F<sub>s</sub>/N = 160/1280 = <strong>0.125 Hz</strong></p><p>Nyquist frequency: F<sub>s</sub>/2 = <strong>80 Hz</strong></p><p>So the DFT tests frequencies from 0 Hz up to 80 Hz, in steps of 0.125 Hz.</p></div><div class="card"><h3>Why FFT?</h3><p>A direct DFT takes about N² operations. The Cooley–Tukey FFT recursively separates even and odd samples, reducing the work to about <strong>N log₂N</strong>.</p><p>The FFT is not a different transform—it is a faster way to calculate the same DFT.</p></div></div>
     </section>
 
     <section id="real">
-      <span class="tag">11–13 minutes</span>
       <h2>Applying it to a real EEG</h2>
-      <p>The analysis selects eight seconds from electrode <code>Oz</code>, subtracts its average, applies a Hann window to reduce edge effects, and calculates power |X[k]|² at every frequency.</p>
+      <p>The analysis selects eight seconds from electrode <code>Oz</code>. Because the recording is sampled at 160 Hz, this produces 1280 discrete numbers. It subtracts their average, applies a Hann window to reduce edge effects, then uses the FFT to calculate the DFT coefficients X[k]. Finally it plots the power |X[k]|² against the DFT-bin frequencies f<sub>k</sub> = kF<sub>s</sub>/N.</p>
       <img src="eeg_fft_demo.png" alt="Oz EEG waveform from 5 to 13 seconds and its power spectrum from 0 to 45 hertz">
       <p>The lower plot has peaks at frequencies that were prominent in this segment. Standard EEG band names include delta (0.5–4 Hz), theta (4–8 Hz), alpha (8–13 Hz), beta (13–30 Hz), and gamma (30–80 Hz). The graph is a signal description, not a medical conclusion.</p>
     </section>
 
     <section id="demo" class="demo">
-      <span class="tag">Live demo: 13–15 minutes</span>
       <h2>Build a signal, then reveal its frequencies</h2>
       <p>Change the two waves. The upper graph is their combined time-domain signal; the lower graph is its spectrum. The peaks appear at the frequencies you chose.</p>
       <div class="controls">

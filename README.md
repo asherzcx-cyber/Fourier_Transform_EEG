@@ -5,11 +5,13 @@
 
 This project derives the Fourier transform from the Fourier series, implements
 the Fast Fourier Transform (FFT) from scratch, and applies it to a real
-experimental EEG recording.
+experimental EEG recording. The continuous Fourier transform supplies the
+mathematical derivation; because the EEG was sampled at 160 Hz, the program
+actually computes a discrete Fourier transform (DFT) using an FFT algorithm.
 
 ## Interactive presentation website
 
-The repository also includes a browser-based 15-minute presentation in
+The repository also includes a browser-based interactive presentation in
 [`docs/index.html`](docs/index.html). It has the real EEG result plus a live
 two-wave mixer: changing the waves immediately changes the displayed DFT
 spectrum. Follow [the short GitHub Pages instructions](docs/README.md) to put
@@ -316,7 +318,7 @@ python3 eeg_analysis.py /path/to/S001R01.edf --channel Fz
 
 ---
 
-## 8. Suggested 5-minute class walkthrough
+## 8. Suggested class walkthrough
 
 1. **Show the figure.** Ask what could be hidden in the messy time-domain signal.
 2. **Explain EEG.** It is sampled scalp voltage, not a medical diagnosis.
